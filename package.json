@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "seed:dev": "node --experimental-strip-types prisma/seed.mts dev",
+    "seed:demo": "node --experimental-strip-types prisma/seed.mts demo"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",

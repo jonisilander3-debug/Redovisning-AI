@@ -2,38 +2,54 @@
 
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar, type NavItem } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
+import type { WorkspaceViewer } from "@/lib/access";
+import { getNavigationItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-
-const navItems: NavItem[] = [
-  { label: "Dashboard", href: "#dashboard" },
-  { label: "Customers", href: "#customers" },
-  { label: "Projects", href: "#projects" },
-  { label: "Time", href: "#time" },
-  { label: "Receipts", href: "#receipts" },
-  { label: "Invoice Drafts", href: "#invoice-drafts" },
-  { label: "Accounting", href: "#accounting" },
-  { label: "Payroll", href: "#payroll" },
-  { label: "Backoffice", href: "#backoffice" },
-];
 
 type AppShellProps = {
   children: ReactNode;
+  viewer: WorkspaceViewer;
 };
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, viewer }: AppShellProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const pathname = usePathname();
+  const navItems: NavItem[] = getNavigationItems(viewer.company.slug, viewer.role, {
+    hasGroupAdmin: Boolean(viewer.company.groupId),
+  });
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(219,234,254,0.55),transparent_28%),radial-gradient(circle_at_top_right,rgba(204,251,241,0.45),transparent_22%),#ffffff]">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
         <div className="hidden w-[292px] shrink-0 lg:block">
-          <Sidebar items={navItems} activeHref="#dashboard" />
+          <Sidebar
+            items={navItems}
+            activeHref={pathname}
+            companyName={viewer.company.name}
+            roleLabel={viewer.roleLabel}
+          />
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar onOpenMenu={() => setIsMobileNavOpen(true)} />
+          <Topbar
+            onOpenMenu={() => setIsMobileNavOpen(true)}
+            companyName={viewer.company.name}
+            companySlug={viewer.company.slug}
+            groupName={viewer.company.groupName}
+            userName={viewer.name ?? viewer.email}
+            roleLabel={viewer.roleLabel}
+            accessibleCompanies={viewer.accessibleCompanies.map((company) => ({
+              id: company.id,
+              name: company.name,
+              slug: company.slug,
+              roleLabel: company.roleLabel,
+              groupName: company.groupName,
+            }))}
+            primaryCompanySlug={viewer.primaryCompanySlug}
+          />
           <main className="flex-1 px-4 py-6 md:px-6 lg:px-8 lg:py-8">
             {children}
           </main>
@@ -55,7 +71,9 @@ export function AppShell({ children }: AppShellProps) {
       >
         <Sidebar
           items={navItems}
-          activeHref="#dashboard"
+          activeHref={pathname}
+          companyName={viewer.company.name}
+          roleLabel={viewer.roleLabel}
           mobile
           onNavigate={() => setIsMobileNavOpen(false)}
         />

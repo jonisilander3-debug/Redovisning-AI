@@ -1,0 +1,1575 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  INACTIVE
+}
+
+enum TimeEntryStatus {
+  ACTIVE
+  COMPLETED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
+}
+
+enum InvoiceLineType {
+  TIME
+  MATERIAL
+  MANUAL
+}
+
+enum InvoiceLineSourceType {
+  TIME
+  MATERIAL
+}
+
+enum InvoiceMode {
+  PROJECT_FINAL
+  PERIODIC
+  MANUAL_PROGRESS
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum QuoteLineType {
+  LABOR
+  MATERIAL
+  FIXED
+  OTHER
+}
+
+enum ProjectCommercialBasisType {
+  QUOTE
+  MANUAL
+  RUNNING_WORK
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum JournalEntrySourceType {
+  INVOICE
+  MATERIAL
+  PAYROLL
+  CUSTOMER_PAYMENT
+  WRITE_OFF
+  YEAR_END
+  MANUAL
+}
+
+enum JournalEntryStatus {
+  DRAFT
+  REVIEWED
+  POSTED
+}
+
+enum AccountingSuggestionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum MaterialAccountingStatus {
+  UNREVIEWED
+  SUGGESTED
+  BOOKED
+}
+
+enum SalaryType {
+  HOURLY
+  MONTHLY
+}
+
+enum PayrollRunStatus {
+  DRAFT
+  FINALIZED
+  PAID
+}
+
+enum PayrollPaymentStatus {
+  UNPAID
+  PAYMENT_FILE_READY
+  PAID
+}
+
+enum BenefitType {
+  CAR
+  MEAL
+  HEALTH
+  OTHER
+}
+
+enum BenefitStatus {
+  DRAFT
+  APPROVED
+}
+
+enum EmployerDeclarationStatus {
+  DRAFT
+  READY
+  SUBMITTED
+}
+
+enum AbsenceType {
+  SICK
+  VACATION
+  VAB
+  UNPAID_LEAVE
+  OTHER
+}
+
+enum AbsenceStatus {
+  DRAFT
+  APPROVED
+}
+
+enum VatReportStatus {
+  DRAFT
+  READY
+  FILED
+}
+
+enum VatAdjustmentStatus {
+  DRAFT
+  POSTED
+}
+
+enum Ink2RunStatus {
+  DRAFT
+  READY
+  EXPORTED
+}
+
+enum YearEndAdjustmentType {
+  PREPAID_EXPENSE
+  ACCRUED_EXPENSE
+  APPROPRIATION
+  TAX
+  MANUAL
+}
+
+enum YearEndAdjustmentStatus {
+  DRAFT
+  POSTED
+}
+
+enum BankFileExportProfile {
+  PAIN_001
+  BANKGIROT_LON
+}
+
+enum AccountingPeriodLockType {
+  VAT
+  YEAR_END
+  MANUAL
+}
+
+enum CustomerPaymentSource {
+  MANUAL
+  IMPORT
+}
+
+enum CustomerPaymentStatus {
+  UNMATCHED
+  MATCHED
+  PARTIAL
+}
+
+enum ProjectStatus {
+  PLANNED
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ChecklistItemStatus {
+  TODO
+  DONE
+}
+
+enum TaskNoteType {
+  COMMENT
+  HANDOFF
+  MANAGER_NOTE
+  PROGRESS_UPDATE
+}
+
+enum TaskTimelineEventType {
+  TASK_CREATED
+  TASK_UPDATED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNEE_CHANGED
+  CHECKLIST_ITEM_ADDED
+  CHECKLIST_ITEM_COMPLETED
+  CHECKLIST_ITEM_REOPENED
+  NOTE_ADDED
+  HANDOFF_ADDED
+  TIME_STARTED
+  TIME_STOPPED
+  BLOCKER_REPORTED
+  BLOCKER_RESOLVED
+  BLOCKER_REOPENED
+  BLOCKER_OUTCOME_UPDATED
+}
+
+enum BlockerStatus {
+  OPEN
+  RESOLVED
+}
+
+enum BlockerSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum BlockerFollowUpStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+}
+
+enum BlockerOutcomeStatus {
+  UNVERIFIED
+  RESOLVED_CONFIRMED
+  RESOLVED_PARTIAL
+  REOPENED
+}
+
+enum PreventiveActionStatus {
+  PROPOSED
+  ACTIVE
+  DONE
+}
+
+enum ExecutionImprovementTargetType {
+  TASK_GUIDANCE
+  CHECKLIST_ITEM
+}
+
+enum ExecutionImprovementStatus {
+  PROPOSED
+  APPLIED
+  ARCHIVED
+}
+
+enum WorkTemplateType {
+  PROJECT_TEMPLATE
+  TASK_TEMPLATE
+}
+
+enum WorkTemplateStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum JobTypePresetStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProjectKickoffStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ProjectActivityEventType {
+  KICKOFF_COMPLETED
+}
+
+enum CompanyType {
+  OPERATING
+  HOLDING
+  SUBSIDIARY
+  PROPERTY
+  OTHER
+}
+
+enum LegalForm {
+  SOLE_PROPRIETORSHIP
+  TRADING_PARTNERSHIP
+  LIMITED_PARTNERSHIP
+  LIMITED_COMPANY
+}
+
+enum CompanyAdoptionFollowUpStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum CompanyAdoptionFollowUpPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum CompanyAdoptionFollowUpReviewStatus {
+  NOT_REVIEWED
+  REVIEWED_RECENTLY
+  REVIEW_NEEDED
+  OVERDUE_REVIEW
+}
+
+enum CompanyAdoptionFollowUpOutcomeStatus {
+  UNVERIFIED
+  IMPROVED
+  PARTIAL_IMPROVEMENT
+  NO_PROGRESS
+  REGRESSED
+}
+
+model Company {
+  id                 String   @id @default(cuid())
+  name               String
+  slug               String   @unique
+  organizationNumber String   @unique
+  groupId            String?
+  parentCompanyId    String?
+  workspaceManagerId String?
+  starterSetupNote   String?
+  bankIban           String?
+  bankBic            String?
+  bankExportProfile  BankFileExportProfile @default(PAIN_001)
+  legalForm          LegalForm @default(LIMITED_COMPANY)
+  companyType        CompanyType @default(OPERATING)
+  isHoldingCompany   Boolean @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  group              BusinessGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  parentCompany      Company? @relation("CompanyHierarchy", fields: [parentCompanyId], references: [id], onDelete: SetNull)
+  childCompanies     Company[] @relation("CompanyHierarchy")
+  workspaceManager   User? @relation("CompanyWorkspaceManager", fields: [workspaceManagerId], references: [id], onDelete: SetNull)
+  adoptionFollowUps  CompanyAdoptionFollowUp[]
+  users              User[]
+  memberships        CompanyMembership[]
+  timeEntries        TimeEntry[]
+  materialEntries    MaterialEntry[]
+  customers          Customer[]
+  quotes            Quote[]
+  invoices           Invoice[]
+  invoiceLines       InvoiceLine[]
+  accounts           Account[]
+  journalEntries     JournalEntry[]
+  postingRules       PostingRule[]
+  accountingSuggestions AccountingSuggestion[]
+  payrollRuns        PayrollRun[]
+  payrollLines       PayrollLine[]
+  employerDeclarationRuns EmployerDeclarationRun[]
+  employerDeclarationLines EmployerDeclarationLine[]
+  absenceEntries     AbsenceEntry[]
+  benefitEntries     BenefitEntry[]
+  vatReportRuns      VatReportRun[]
+  vatAdjustments     VatAdjustment[]
+  ink2ReportRuns     Ink2ReportRun[]
+  yearEndAdjustments YearEndAdjustment[]
+  accountingPeriodLocks AccountingPeriodLock[]
+  customerPayments   CustomerPayment[]
+  invoiceWriteOffs   InvoiceWriteOff[]
+  projects           Project[]
+  tasks              Task[]
+  checklistItems     ChecklistItem[]
+  taskNotes          TaskNote[]
+  taskTimelineEvents TaskTimelineEvent[]
+  blockers           TaskBlocker[]
+  preventiveActions  PreventiveAction[]
+  executionImprovements ExecutionImprovement[]
+  taskAppliedImprovements TaskAppliedImprovement[]
+  workTemplates      WorkTemplate[]
+  templateTasks      TemplateTask[]
+  templateChecklistItems TemplateChecklistItem[]
+  jobTypePresets     JobTypePreset[]
+  projectActivityEvents ProjectActivityEvent[]
+  projectKickoffFocusTasks ProjectKickoffFocusTask[]
+
+  @@index([groupId])
+  @@index([parentCompanyId])
+  @@index([workspaceManagerId])
+  @@index([legalForm])
+  @@index([companyType])
+}
+
+model Customer {
+  id                String   @id @default(cuid())
+  companyId         String
+  name              String
+  organizationNumber String?
+  contactPerson     String?
+  email             String?
+  phone             String?
+  addressLine1      String?
+  postalCode        String?
+  city              String?
+  invoiceTermsDays  Int?
+  defaultHourlyRate Decimal?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  company           Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  projects          Project[]
+  invoices          Invoice[]
+  quotes            Quote[]
+
+  @@index([companyId, name])
+  @@index([companyId, organizationNumber])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         UserRole @default(EMPLOYEE)
+  status       UserStatus @default(INVITED)
+  companyId    String
+  defaultDailyCapacityHours Float @default(8)
+  weeklyCapacityHours Float?
+  salaryType   SalaryType @default(HOURLY)
+  hourlyRate   Decimal?
+  monthlySalary Decimal?
+  taxTable     String?
+  taxPercent   Decimal? @default(30)
+  employerContributionRate Decimal? @default(31.42)
+  bankIban     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  managedCompanies Company[] @relation("CompanyWorkspaceManager")
+  ownedCompanyAdoptionFollowUps CompanyAdoptionFollowUp[] @relation("CompanyAdoptionFollowUpOwner")
+  reviewedCompanyAdoptionFollowUps CompanyAdoptionFollowUp[] @relation("CompanyAdoptionFollowUpLastReviewedBy")
+  recordedCompanyAdoptionFollowUpOutcomes CompanyAdoptionFollowUp[] @relation("CompanyAdoptionFollowUpOutcomeRecordedBy")
+  reviewedAccountingSuggestions AccountingSuggestion[] @relation("AccountingSuggestionReviewedBy")
+  companyMemberships CompanyMembership[]
+  timeEntries  TimeEntry[]
+  materialEntries MaterialEntry[]
+  payrollLines PayrollLine[]
+  absenceEntries AbsenceEntry[]
+  benefitEntries BenefitEntry[]
+  employerDeclarationLines EmployerDeclarationLine[]
+  projectAssignments ProjectAssignment[]
+  assignedTasks Task[] @relation("TaskAssignee")
+  assignedChecklistItems ChecklistItem[] @relation("ChecklistItemAssignee")
+  taskNotes TaskNote[]
+  taskTimelineEvents TaskTimelineEvent[]
+  reportedBlockers TaskBlocker[]
+  ownedBlockerFollowUps TaskBlocker[] @relation("BlockerFollowUpOwner")
+  verifiedBlockerOutcomes TaskBlocker[] @relation("BlockerVerifiedBy")
+  ownedPreventiveActions PreventiveAction[] @relation("PreventiveActionOwner")
+  completedProjectKickoffs Project[] @relation("ProjectKickoffCompletedBy")
+  projectActivityEvents ProjectActivityEvent[]
+}
+
+model BusinessGroup {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  companies Company[]
+}
+
+model CompanyMembership {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  role      UserRole @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@index([companyId])
+}
+
+model CompanyAdoptionFollowUp {
+  id                   String                               @id @default(cuid())
+  companyId            String
+  title                String
+  description          String?
+  ownerId              String?
+  dueDate              DateTime?
+  reviewByDate         DateTime?
+  lastReviewedAt       DateTime?
+  lastReviewedByUserId String?
+  reviewStatus         CompanyAdoptionFollowUpReviewStatus @default(NOT_REVIEWED)
+  reviewNote           String?
+  outcomeStatus        CompanyAdoptionFollowUpOutcomeStatus @default(UNVERIFIED)
+  outcomeSummary       String?
+  outcomeRecordedAt    DateTime?
+  outcomeRecordedByUserId String?
+  status               CompanyAdoptionFollowUpStatus       @default(OPEN)
+  priority             CompanyAdoptionFollowUpPriority     @default(MEDIUM)
+  createdAt            DateTime                            @default(now())
+  updatedAt            DateTime                            @updatedAt
+  completedAt          DateTime?
+  company              Company                             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner                User?                               @relation("CompanyAdoptionFollowUpOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  lastReviewedBy       User?                               @relation("CompanyAdoptionFollowUpLastReviewedBy", fields: [lastReviewedByUserId], references: [id], onDelete: SetNull)
+  outcomeRecordedBy    User?                               @relation("CompanyAdoptionFollowUpOutcomeRecordedBy", fields: [outcomeRecordedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, dueDate])
+  @@index([ownerId, status, dueDate])
+  @@index([priority, status])
+  @@index([reviewStatus, reviewByDate])
+  @@index([lastReviewedByUserId, reviewStatus])
+  @@index([outcomeStatus, outcomeRecordedAt])
+  @@index([outcomeRecordedByUserId, outcomeStatus])
+}
+
+model TimeEntry {
+  id        String          @id @default(cuid())
+  companyId String
+  userId    String
+  projectId String?
+  taskId    String?
+  hourlyRate Decimal?
+  isBillable Boolean        @default(true)
+  invoiced  Boolean         @default(false)
+  invoicedQuantity Decimal  @default(0)
+  invoicedAmount Decimal    @default(0)
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime?
+  status    TimeEntryStatus @default(ACTIVE)
+  note      String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  task      Task?           @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  invoiceLines InvoiceLine[]
+  payrollLineEntries PayrollLineTimeEntry[]
+
+  @@index([companyId, date])
+  @@index([userId, status])
+  @@index([projectId, date])
+  @@index([taskId, date])
+  @@index([companyId, isBillable, invoiced])
+}
+
+model Project {
+  id           String              @id @default(cuid())
+  companyId    String
+  customerId   String?
+  quoteId      String?
+  customerName String
+  title        String
+  description  String?
+  status       ProjectStatus       @default(PLANNED)
+  commercialBasisType ProjectCommercialBasisType @default(RUNNING_WORK)
+  budgetNet    Decimal?
+  budgetGross  Decimal?
+  budgetLaborValue Decimal?
+  budgetMaterialValue Decimal?
+  startDate    DateTime?
+  endDate      DateTime?
+  location     String?
+  kickoffStatus ProjectKickoffStatus @default(NOT_STARTED)
+  kickoffCompletedAt DateTime?
+  kickoffCompletedByUserId String?
+  kickoffNotes String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  company      Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer     Customer?           @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  kickoffCompletedBy User? @relation("ProjectKickoffCompletedBy", fields: [kickoffCompletedByUserId], references: [id], onDelete: SetNull)
+  assignments  ProjectAssignment[]
+  timeEntries  TimeEntry[]
+  materialEntries MaterialEntry[]
+  invoices     Invoice[]
+  accountingSuggestions AccountingSuggestion[]
+  tasks        Task[]
+  checklistItems ChecklistItem[]
+  taskNotes TaskNote[]
+  taskTimelineEvents TaskTimelineEvent[]
+  blockers TaskBlocker[]
+  preventiveActions PreventiveAction[]
+  executionImprovements ExecutionImprovement[]
+  activityEvents ProjectActivityEvent[]
+  kickoffFocusTasks ProjectKickoffFocusTask[]
+
+  @@index([companyId, status])
+  @@index([customerId])
+  @@index([quoteId])
+  @@index([kickoffStatus])
+}
+
+model Quote {
+  id          String      @id @default(cuid())
+  companyId    String
+  customerId   String
+  projectId    String?
+  quoteNumber  String
+  status       QuoteStatus @default(DRAFT)
+  title        String
+  description  String?
+  issueDate    DateTime
+  validUntil   DateTime?
+  totalNet     Decimal
+  totalVat     Decimal
+  totalGross   Decimal
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  acceptedAt   DateTime?
+  company      Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer     Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  lines        QuoteLine[]
+
+  @@unique([companyId, quoteNumber])
+  @@index([companyId, status, issueDate])
+  @@index([customerId, status, issueDate])
+  @@index([projectId])
+}
+
+model QuoteLine {
+  id         String       @id @default(cuid())
+  quoteId     String
+  type        QuoteLineType
+  description String
+  quantity    Decimal
+  unitPrice   Decimal
+  vatRate     Decimal
+  totalNet    Decimal
+  totalVat    Decimal
+  totalGross  Decimal
+  sortOrder   Int         @default(0)
+  quote       Quote       @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId, sortOrder])
+}
+
+model MaterialEntry {
+  id          String   @id @default(cuid())
+  companyId   String
+  projectId   String
+  userId      String
+  description String
+  quantity    Decimal
+  unitCost    Decimal
+  unitPrice   Decimal
+  isBillable  Boolean  @default(true)
+  invoiced    Boolean  @default(false)
+  invoicedQuantity Decimal @default(0)
+  invoicedAmount Decimal   @default(0)
+  accountingStatus MaterialAccountingStatus @default(UNREVIEWED)
+  journalEntryId String?
+  supplierName String?
+  vatRate     Decimal?
+  receiptDate DateTime?
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoiceLines InvoiceLine[]
+  journalEntry JournalEntry? @relation("MaterialJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt])
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+  @@index([companyId, isBillable, invoiced])
+  @@index([accountingStatus, createdAt])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  companyId     String
+  projectId     String?
+  customerId    String?
+  customerName  String
+  invoiceMode   InvoiceMode   @default(PROJECT_FINAL)
+  status        InvoiceStatus @default(DRAFT)
+  invoiceNumber String
+  issueDate     DateTime
+  dueDate       DateTime
+  billingPeriodStart DateTime?
+  billingPeriodEnd DateTime?
+  totalNet      Decimal
+  totalVat      Decimal
+  totalGross    Decimal
+  paidAmount    Decimal       @default(0)
+  writtenOffAmount Decimal    @default(0)
+  paymentDate   DateTime?
+  paymentReference String?
+  isCreditNote  Boolean       @default(false)
+  creditNoteOfInvoiceId String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project       Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  customer      Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  creditNoteOf  Invoice?      @relation("InvoiceCreditNotes", fields: [creditNoteOfInvoiceId], references: [id], onDelete: SetNull)
+  creditNotes   Invoice[]     @relation("InvoiceCreditNotes")
+  lines         InvoiceLine[]
+  customerPayments CustomerPayment[]
+  writeOffs     InvoiceWriteOff[]
+
+  @@unique([companyId, invoiceNumber])
+  @@index([companyId, status, issueDate])
+  @@index([projectId, issueDate])
+  @@index([customerId, issueDate])
+  @@index([creditNoteOfInvoiceId])
+}
+
+model InvoiceLine {
+  id                String          @id @default(cuid())
+  invoiceId         String
+  companyId         String
+  type              InvoiceLineType
+  sourceType        InvoiceLineSourceType?
+  sourceId          String?
+  description       String
+  quantity          Decimal
+  unitPrice         Decimal
+  vatRate           Decimal
+  totalNet          Decimal
+  totalVat          Decimal
+  totalGross        Decimal
+  sourceTimeEntryId String?
+  sourceMaterialId  String?
+  invoice           Invoice         @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  company           Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sourceTimeEntry   TimeEntry?      @relation(fields: [sourceTimeEntryId], references: [id], onDelete: SetNull)
+  sourceMaterial    MaterialEntry?  @relation(fields: [sourceMaterialId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId])
+  @@index([companyId, type])
+  @@index([sourceType, sourceId])
+  @@index([sourceTimeEntryId])
+  @@index([sourceMaterialId])
+}
+
+model Account {
+  id         String      @id @default(cuid())
+  companyId  String
+  number     String
+  name       String
+  type       AccountType
+  vatCode    String?
+  isDefault  Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  company    Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  journalEntryLines JournalEntryLine[]
+  postingRulesAsDebit PostingRule[] @relation("PostingRuleDebitAccount")
+  postingRulesAsCredit PostingRule[] @relation("PostingRuleCreditAccount")
+  accountingSuggestions AccountingSuggestion[] @relation("AccountingSuggestionAccount")
+  yearEndAdjustmentsAsDebit YearEndAdjustment[] @relation("YearEndAdjustmentDebitAccount")
+  yearEndAdjustmentsAsCredit YearEndAdjustment[] @relation("YearEndAdjustmentCreditAccount")
+
+  @@unique([companyId, number])
+  @@index([companyId, type])
+}
+
+model JournalEntry {
+  id          String                 @id @default(cuid())
+  companyId   String
+  date        DateTime
+  description String
+  sourceType  JournalEntrySourceType
+  sourceId    String?
+  status      JournalEntryStatus     @default(POSTED)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  company     Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  lines       JournalEntryLine[]
+  materialEntries MaterialEntry[]    @relation("MaterialJournalEntry")
+  payrollRuns  PayrollRun[]          @relation("PayrollRunJournalEntry")
+  customerPayments CustomerPayment[] @relation("CustomerPaymentJournalEntry")
+  vatReportLinks VatReportJournalEntry[]
+  vatAdjustments VatAdjustment[]     @relation("VatAdjustmentJournalEntry")
+  vatSettlementRuns VatReportRun[]   @relation("VatSettlementJournalEntry")
+  invoiceWriteOffs InvoiceWriteOff[] @relation("InvoiceWriteOffJournalEntry")
+  yearEndAdjustments YearEndAdjustment[] @relation("YearEndAdjustmentJournalEntry")
+
+  @@unique([companyId, sourceType, sourceId])
+  @@index([companyId, date])
+  @@index([sourceType, sourceId])
+  @@index([status, date])
+}
+
+model JournalEntryLine {
+  id             String       @id @default(cuid())
+  journalEntryId String
+  accountId      String
+  debit          Decimal
+  credit         Decimal
+  vatRate        Decimal?
+  vatAmount      Decimal?
+  description    String?
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account        Account      @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([journalEntryId])
+  @@index([accountId])
+}
+
+model PostingRule {
+  id              String                 @id @default(cuid())
+  companyId       String
+  sourceType      JournalEntrySourceType
+  triggerKey      String
+  debitAccountId  String?
+  creditAccountId String?
+  defaultVatRate  Decimal?
+  description     String?
+  isActive        Boolean                @default(true)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  company         Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  debitAccount    Account?               @relation("PostingRuleDebitAccount", fields: [debitAccountId], references: [id], onDelete: SetNull)
+  creditAccount   Account?               @relation("PostingRuleCreditAccount", fields: [creditAccountId], references: [id], onDelete: SetNull)
+
+  @@unique([companyId, sourceType, triggerKey])
+  @@index([companyId, sourceType, isActive])
+}
+
+model AccountingSuggestion {
+  id                 String                    @id @default(cuid())
+  companyId          String
+  sourceType         JournalEntrySourceType
+  sourceId           String
+  suggestedAccountId String?
+  suggestedVatRate   Decimal?
+  suggestedProjectId String?
+  confidenceScore    Float?
+  reasoning          String?
+  status             AccountingSuggestionStatus @default(PENDING)
+  reviewedByUserId   String?
+  reviewedAt         DateTime?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  company            Company                   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  suggestedAccount   Account?                  @relation("AccountingSuggestionAccount", fields: [suggestedAccountId], references: [id], onDelete: SetNull)
+  suggestedProject   Project?                  @relation(fields: [suggestedProjectId], references: [id], onDelete: SetNull)
+  reviewedBy         User?                     @relation("AccountingSuggestionReviewedBy", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, createdAt])
+  @@index([sourceType, sourceId])
+  @@index([reviewedByUserId, status])
+}
+
+model PayrollRun {
+  id             String       @id @default(cuid())
+  companyId      String
+  title          String
+  periodStart    DateTime
+  periodEnd      DateTime
+  status         PayrollRunStatus @default(DRAFT)
+  totalGross     Decimal      @default(0)
+  totalTax       Decimal      @default(0)
+  totalEmployerContribution Decimal @default(0)
+  totalNet       Decimal      @default(0)
+  finalizedAt    DateTime?
+  journalEntryId String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  journalEntry   JournalEntry? @relation("PayrollRunJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+  lines          PayrollLine[]
+  declarationLinks EmployerDeclarationPayrollRun[]
+
+  @@index([companyId, status, periodEnd])
+}
+
+model PayrollLine {
+  id                 String     @id @default(cuid())
+  companyId          String
+  payrollRunId       String
+  userId             String
+  hoursWorked        Decimal    @default(0)
+  grossSalary        Decimal    @default(0)
+  employerContribution Decimal  @default(0)
+  taxAmount          Decimal    @default(0)
+  netSalary          Decimal    @default(0)
+  absenceHours       Decimal    @default(0)
+  absenceAdjustmentAmount Decimal @default(0)
+  benefitsAmount     Decimal    @default(0)
+  taxableBenefitsAmount Decimal @default(0)
+  taxableGrossAmount Decimal @default(0)
+  vacationPayAmount  Decimal    @default(0)
+  sickPayAmount      Decimal    @default(0)
+  karensDeductionAmount Decimal @default(0)
+  vabDeductionAmount Decimal @default(0)
+  unpaidLeaveDeductionAmount Decimal @default(0)
+  paymentStatus      PayrollPaymentStatus @default(UNPAID)
+  payoutReference    String?
+  paidAt             DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  company            Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  payrollRun         PayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timeEntries        PayrollLineTimeEntry[]
+  declarationLines   EmployerDeclarationLine[]
+
+  @@index([companyId, payrollRunId])
+  @@index([userId])
+  @@unique([payrollRunId, userId])
+}
+
+model PayrollLineTimeEntry {
+  id           String      @id @default(cuid())
+  payrollLineId String
+  timeEntryId   String
+  createdAt    DateTime    @default(now())
+  payrollLine  PayrollLine @relation(fields: [payrollLineId], references: [id], onDelete: Cascade)
+  timeEntry    TimeEntry   @relation(fields: [timeEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([payrollLineId, timeEntryId])
+  @@index([timeEntryId])
+}
+
+model EmployerDeclarationRun {
+  id                       String                    @id @default(cuid())
+  companyId                String
+  periodStart              DateTime
+  periodEnd                DateTime
+  status                   EmployerDeclarationStatus @default(DRAFT)
+  totalGrossSalary         Decimal                   @default(0)
+  totalTax                 Decimal                   @default(0)
+  totalEmployerContribution Decimal                  @default(0)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  exportedAt               DateTime?
+  exportFormat             String?
+  submittedAt              DateTime?
+  submissionReference      String?
+  company                  Company                   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  lines                    EmployerDeclarationLine[]
+  payrollRuns              EmployerDeclarationPayrollRun[]
+
+  @@index([companyId, status, periodEnd])
+}
+
+model EmployerDeclarationLine {
+  id                         String                  @id @default(cuid())
+  companyId                  String
+  employerDeclarationRunId   String
+  payrollLineId              String?
+  userId                     String
+  grossSalary                Decimal                 @default(0)
+  taxAmount                  Decimal                 @default(0)
+  employerContribution       Decimal                 @default(0)
+  benefitsAmount             Decimal                 @default(0)
+  absenceAdjustmentAmount    Decimal                 @default(0)
+  createdAt                  DateTime                @default(now())
+  updatedAt                  DateTime                @updatedAt
+  company                    Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employerDeclarationRun     EmployerDeclarationRun  @relation(fields: [employerDeclarationRunId], references: [id], onDelete: Cascade)
+  payrollLine                PayrollLine?            @relation(fields: [payrollLineId], references: [id], onDelete: SetNull)
+  user                       User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, employerDeclarationRunId])
+  @@index([userId])
+}
+
+model EmployerDeclarationPayrollRun {
+  id                       String                 @id @default(cuid())
+  employerDeclarationRunId String
+  payrollRunId             String
+  createdAt                DateTime               @default(now())
+  employerDeclarationRun   EmployerDeclarationRun @relation(fields: [employerDeclarationRunId], references: [id], onDelete: Cascade)
+  payrollRun               PayrollRun             @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+
+  @@unique([payrollRunId])
+  @@unique([employerDeclarationRunId, payrollRunId])
+}
+
+model AbsenceEntry {
+  id             String        @id @default(cuid())
+  companyId      String
+  userId         String
+  type           AbsenceType
+  startDate      DateTime
+  endDate        DateTime
+  quantityDays   Decimal?
+  quantityHours  Decimal?
+  note           String?
+  status         AbsenceStatus @default(DRAFT)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, status, startDate])
+  @@index([userId, status, startDate])
+}
+
+model BenefitEntry {
+  id             String        @id @default(cuid())
+  companyId      String
+  userId         String
+  type           BenefitType
+  description    String
+  taxableAmount  Decimal
+  status         BenefitStatus @default(DRAFT)
+  date           DateTime
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, status, date])
+  @@index([userId, status, date])
+}
+
+model VatReportRun {
+  id             String          @id @default(cuid())
+  companyId      String
+  periodStart    DateTime
+  periodEnd      DateTime
+  status         VatReportStatus @default(DRAFT)
+  outputVat25    Decimal         @default(0)
+  inputVat       Decimal         @default(0)
+  netVatPayable  Decimal         @default(0)
+  journalEntryCount Int          @default(0)
+  correctionOfVatReportRunId String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  exportedAt     DateTime?
+  lockedAt       DateTime?
+  filedAt        DateTime?
+  settledAt      DateTime?
+  settlementJournalEntryId String?
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  correctionOf   VatReportRun?   @relation("VatReportCorrections", fields: [correctionOfVatReportRunId], references: [id], onDelete: SetNull)
+  corrections    VatReportRun[]  @relation("VatReportCorrections")
+  journalEntries VatReportJournalEntry[]
+  adjustments    VatAdjustment[]
+  settlementJournalEntry JournalEntry? @relation("VatSettlementJournalEntry", fields: [settlementJournalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, periodEnd])
+  @@index([correctionOfVatReportRunId])
+  @@index([settlementJournalEntryId])
+}
+
+model VatAdjustment {
+  id             String              @id @default(cuid())
+  companyId      String
+  vatReportRunId String
+  journalEntryId String?
+  date           DateTime
+  outputVatDelta Decimal             @default(0)
+  inputVatDelta  Decimal             @default(0)
+  description    String
+  status         VatAdjustmentStatus @default(POSTED)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  company        Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vatReportRun   VatReportRun        @relation(fields: [vatReportRunId], references: [id], onDelete: Cascade)
+  journalEntry   JournalEntry?       @relation("VatAdjustmentJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, date])
+  @@index([vatReportRunId, createdAt])
+}
+
+model Ink2ReportRun {
+  id           String        @id @default(cuid())
+  companyId    String
+  year         Int
+  status       Ink2RunStatus @default(DRAFT)
+  exportFormat String?
+  exportedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  lines        Ink2ReportLine[]
+
+  @@unique([companyId, year])
+  @@index([companyId, status, year])
+}
+
+model Ink2ReportLine {
+  id            String       @id @default(cuid())
+  ink2ReportRunId String
+  code          String
+  label         String
+  amount        Decimal      @default(0)
+  sortOrder     Int          @default(0)
+  createdAt     DateTime     @default(now())
+  ink2ReportRun Ink2ReportRun @relation(fields: [ink2ReportRunId], references: [id], onDelete: Cascade)
+
+  @@unique([ink2ReportRunId, code])
+  @@index([ink2ReportRunId, sortOrder])
+}
+
+model YearEndAdjustment {
+  id              String                  @id @default(cuid())
+  companyId       String
+  journalEntryId  String?
+  year            Int
+  type            YearEndAdjustmentType
+  status          YearEndAdjustmentStatus @default(DRAFT)
+  date            DateTime
+  description     String
+  amount          Decimal
+  debitAccountId  String
+  creditAccountId String
+  note            String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  company         Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  journalEntry    JournalEntry?           @relation("YearEndAdjustmentJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+  debitAccount    Account                 @relation("YearEndAdjustmentDebitAccount", fields: [debitAccountId], references: [id], onDelete: Restrict)
+  creditAccount   Account                 @relation("YearEndAdjustmentCreditAccount", fields: [creditAccountId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, year, status])
+  @@index([journalEntryId])
+}
+
+model AccountingPeriodLock {
+  id         String                   @id @default(cuid())
+  companyId  String
+  periodStart DateTime
+  periodEnd  DateTime
+  type       AccountingPeriodLockType
+  note       String?
+  createdAt  DateTime                 @default(now())
+  updatedAt  DateTime                 @updatedAt
+  company    Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, type, periodStart, periodEnd])
+  @@index([companyId, periodStart, periodEnd])
+  @@index([companyId, type])
+}
+
+model VatReportJournalEntry {
+  id            String       @id @default(cuid())
+  vatReportRunId String
+  journalEntryId String
+  createdAt     DateTime     @default(now())
+  vatReportRun  VatReportRun @relation(fields: [vatReportRunId], references: [id], onDelete: Cascade)
+  journalEntry  JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([vatReportRunId, journalEntryId])
+  @@index([journalEntryId])
+}
+
+model CustomerPayment {
+  id             String                @id @default(cuid())
+  companyId      String
+  invoiceId      String?
+  journalEntryId String?
+  date           DateTime
+  amount         Decimal
+  reference      String?
+  source         CustomerPaymentSource @default(MANUAL)
+  status         CustomerPaymentStatus @default(UNMATCHED)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  company        Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice        Invoice?              @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  journalEntry   JournalEntry?         @relation("CustomerPaymentJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, date])
+  @@index([invoiceId, date])
+}
+
+model InvoiceWriteOff {
+  id             String       @id @default(cuid())
+  companyId      String
+  invoiceId      String
+  journalEntryId String?
+  date           DateTime
+  amount         Decimal
+  reason         String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice        Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  journalEntry   JournalEntry? @relation("InvoiceWriteOffJournalEntry", fields: [journalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, date])
+  @@index([invoiceId, date])
+}
+
+model ProjectAssignment {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model Task {
+  id             String       @id @default(cuid())
+  companyId      String
+  projectId      String
+  title          String
+  description    String?
+  status         TaskStatus   @default(TODO)
+  priority       TaskPriority @default(MEDIUM)
+  assignedUserId String?
+  plannedStartDate DateTime?
+  plannedEndDate   DateTime?
+  dueDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedUser   User?        @relation("TaskAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  timeEntries    TimeEntry[]
+  checklistItems ChecklistItem[]
+  taskNotes      TaskNote[]
+  timelineEvents TaskTimelineEvent[]
+  blockers       TaskBlocker[]
+  preventiveActions PreventiveAction[]
+  executionImprovements ExecutionImprovement[] @relation("TaskExecutionImprovements")
+  appliedImprovements TaskAppliedImprovement[]
+  kickoffFocusProjects ProjectKickoffFocusTask[]
+
+  @@index([companyId, status])
+  @@index([projectId, status])
+  @@index([assignedUserId])
+}
+
+model ProjectKickoffFocusTask {
+  id        String   @id @default(cuid())
+  companyId String
+  projectId String
+  taskId    String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, taskId])
+  @@index([companyId, projectId, sortOrder])
+}
+
+model ProjectActivityEvent {
+  id          String                   @id @default(cuid())
+  companyId   String
+  projectId   String
+  userId      String?
+  type        ProjectActivityEventType
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime                 @default(now())
+  company     Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project     Project                  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt])
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model TaskNote {
+  id        String       @id @default(cuid())
+  companyId String
+  projectId String
+  taskId    String
+  userId    String
+  type      TaskNoteType @default(COMMENT)
+  content   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  company   Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task      Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, taskId, createdAt])
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model TaskTimelineEvent {
+  id          String                @id @default(cuid())
+  companyId   String
+  projectId   String
+  taskId      String
+  userId      String?
+  type        TaskTimelineEventType
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime              @default(now())
+  company     Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project     Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task        Task                  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user        User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt])
+  @@index([projectId, createdAt])
+  @@index([taskId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model TaskBlocker {
+  id             String          @id @default(cuid())
+  companyId      String
+  projectId      String
+  taskId         String
+  userId         String
+  title          String
+  description    String
+  status         BlockerStatus   @default(OPEN)
+  severity       BlockerSeverity @default(MEDIUM)
+  followUpAction String?
+  followUpOwnerId String?
+  followUpDate   DateTime?
+  followUpStatus BlockerFollowUpStatus?
+  lastFollowUpAt DateTime?
+  outcomeStatus  BlockerOutcomeStatus @default(UNVERIFIED)
+  outcomeSummary String?
+  verifiedByUserId String?
+  verifiedAt     DateTime?
+  reopenedAt     DateTime?
+  reopenReason   String?
+  resolutionNote String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  resolvedAt     DateTime?
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task           Task            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  followUpOwner  User?           @relation("BlockerFollowUpOwner", fields: [followUpOwnerId], references: [id], onDelete: SetNull)
+  verifiedBy     User?           @relation("BlockerVerifiedBy", fields: [verifiedByUserId], references: [id], onDelete: SetNull)
+  preventiveActions PreventiveAction[] @relation("PreventiveActionSourceBlocker")
+
+  @@index([companyId, status, severity])
+  @@index([projectId, status, createdAt])
+  @@index([taskId, status, createdAt])
+  @@index([userId, createdAt])
+  @@index([followUpOwnerId, followUpDate])
+  @@index([verifiedByUserId, verifiedAt])
+}
+
+model PreventiveAction {
+  id              String                 @id @default(cuid())
+  companyId       String
+  projectId       String?
+  relatedTaskId   String?
+  sourceBlockerId String?
+  ownerId         String?
+  title           String
+  description     String
+  status          PreventiveActionStatus @default(PROPOSED)
+  dueDate         DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  company         Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project         Project?               @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  relatedTask     Task?                  @relation(fields: [relatedTaskId], references: [id], onDelete: SetNull)
+  sourceBlocker   TaskBlocker?           @relation("PreventiveActionSourceBlocker", fields: [sourceBlockerId], references: [id], onDelete: SetNull)
+  owner           User?                  @relation("PreventiveActionOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  executionImprovements ExecutionImprovement[]
+
+  @@index([companyId, status, dueDate])
+  @@index([projectId, status])
+  @@index([relatedTaskId, status])
+  @@index([sourceBlockerId])
+  @@index([ownerId, dueDate])
+}
+
+model ChecklistItem {
+  id             String              @id @default(cuid())
+  companyId      String
+  projectId      String
+  taskId         String
+  title          String
+  description    String?
+  status         ChecklistItemStatus @default(TODO)
+  sortOrder      Int                 @default(0)
+  assignedUserId String?
+  completedAt    DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  company        Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project        Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task           Task                @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  assignedUser   User?               @relation("ChecklistItemAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  sourceExecutionImprovementId String?
+  sourceExecutionImprovement ExecutionImprovement? @relation(fields: [sourceExecutionImprovementId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@index([projectId, taskId, sortOrder])
+  @@index([assignedUserId])
+  @@index([sourceExecutionImprovementId])
+}
+
+model WorkTemplate {
+  id                        String             @id @default(cuid())
+  companyId                 String
+  title                     String
+  description               String?
+  templateType              WorkTemplateType
+  status                    WorkTemplateStatus @default(ACTIVE)
+  defaultProjectTitle       String?
+  defaultProjectDescription String?
+  defaultTaskTitle          String?
+  defaultTaskDescription    String?
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  company                   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tasks                     TemplateTask[]
+  checklistItems            TemplateChecklistItem[]
+  linkedImprovements        TemplateExecutionImprovement[]
+  linkedJobTypePresets      JobTypePreset[]
+
+  @@index([companyId, templateType, status])
+}
+
+model TemplateTask {
+  id          String        @id @default(cuid())
+  companyId   String
+  templateId  String
+  title       String
+  description String?
+  sortOrder   Int           @default(0)
+  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  template    WorkTemplate  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  checklistItems TemplateChecklistItem[]
+
+  @@index([templateId, sortOrder])
+  @@index([companyId, templateId])
+}
+
+model TemplateChecklistItem {
+  id                          String                @id @default(cuid())
+  companyId                   String
+  templateId                  String
+  templateTaskId              String?
+  title                       String
+  description                 String?
+  sortOrder                   Int                   @default(0)
+  sourceExecutionImprovementId String?
+  company                     Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  template                    WorkTemplate          @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateTask                TemplateTask?         @relation(fields: [templateTaskId], references: [id], onDelete: Cascade)
+  sourceExecutionImprovement  ExecutionImprovement? @relation(fields: [sourceExecutionImprovementId], references: [id], onDelete: SetNull)
+
+  @@index([templateId, sortOrder])
+  @@index([templateTaskId, sortOrder])
+  @@index([sourceExecutionImprovementId])
+}
+
+model TemplateExecutionImprovement {
+  id                     String               @id @default(cuid())
+  templateId             String
+  executionImprovementId String
+  template               WorkTemplate         @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  executionImprovement   ExecutionImprovement @relation(fields: [executionImprovementId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, executionImprovementId])
+  @@index([executionImprovementId])
+}
+
+model JobTypePreset {
+  id                      String              @id @default(cuid())
+  companyId               String
+  title                   String
+  description             String?
+  launchLabel             String?
+  launchDescription       String?
+  status                  JobTypePresetStatus @default(ACTIVE)
+  linkedProjectTemplateId String?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  company                 Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  linkedProjectTemplate   WorkTemplate?       @relation(fields: [linkedProjectTemplateId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@index([linkedProjectTemplateId])
+}
+
+model ExecutionImprovement {
+  id                       String                        @id @default(cuid())
+  companyId                String
+  projectId                String?
+  relatedTaskId            String?
+  sourcePreventiveActionId String?
+  title                    String
+  description              String
+  targetType               ExecutionImprovementTargetType
+  status                   ExecutionImprovementStatus    @default(PROPOSED)
+  appliesToFutureTasks     Boolean                       @default(true)
+  createdAt                DateTime                      @default(now())
+  updatedAt                DateTime                      @updatedAt
+  company                  Company                       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project                  Project?                      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  relatedTask              Task?                         @relation("TaskExecutionImprovements", fields: [relatedTaskId], references: [id], onDelete: SetNull)
+  sourcePreventiveAction   PreventiveAction?             @relation(fields: [sourcePreventiveActionId], references: [id], onDelete: SetNull)
+  checklistItems           ChecklistItem[]
+  taskApplications         TaskAppliedImprovement[]
+  templateChecklistItems   TemplateChecklistItem[]
+  templateLinks            TemplateExecutionImprovement[]
+
+  @@index([companyId, status, targetType])
+  @@index([projectId, status])
+  @@index([relatedTaskId, status])
+  @@index([sourcePreventiveActionId])
+}
+
+model TaskAppliedImprovement {
+  id                     String               @id @default(cuid())
+  companyId              String
+  taskId                 String
+  executionImprovementId String
+  createdAt              DateTime             @default(now())
+  company                Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  task                   Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  executionImprovement   ExecutionImprovement @relation(fields: [executionImprovementId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, executionImprovementId])
+  @@index([companyId, createdAt])
+  @@index([executionImprovementId])
+}

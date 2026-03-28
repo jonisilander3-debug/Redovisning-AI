@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export type NavItem = {
@@ -8,6 +9,8 @@ export type NavItem = {
 type SidebarProps = {
   items: NavItem[];
   activeHref: string;
+  companyName: string;
+  roleLabel: string;
   mobile?: boolean;
   onNavigate?: () => void;
 };
@@ -15,6 +18,8 @@ type SidebarProps = {
 export function Sidebar({
   items,
   activeHref,
+  companyName,
+  roleLabel,
   mobile = false,
   onNavigate,
 }: SidebarProps) {
@@ -32,16 +37,16 @@ export function Sidebar({
           </div>
           <div>
             <p className="text-sm font-semibold text-[var(--color-foreground)]">
-              Northstar
+              {companyName}
             </p>
             <p className="text-xs text-[var(--color-muted-foreground)]">
-              Business workspace
+              {roleLabel}
             </p>
           </div>
         </div>
         <p className="max-w-xs text-sm leading-6 text-[var(--color-muted-foreground)]">
-          A calm place to follow how the business is moving, what needs care,
-          and where to focus next.
+          A calm place to plan projects, follow execution, and spot what needs
+          attention next.
         </p>
       </div>
 
@@ -50,7 +55,7 @@ export function Sidebar({
           const isActive = item.href === activeHref;
 
           return (
-            <a
+            <Link
               key={item.label}
               href={item.href}
               onClick={onNavigate}
@@ -62,18 +67,18 @@ export function Sidebar({
               )}
             >
               {item.label}
-            </a>
+            </Link>
           );
         })}
       </nav>
 
       <div className="mt-auto rounded-[24px] bg-[linear-gradient(180deg,#eff6ff_0%,#f0fdfa_100%)] p-4 shadow-[var(--shadow-card)]">
         <p className="text-sm font-semibold text-[var(--color-foreground)]">
-          Your workspace is ready
+          Built for daily operations
         </p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
-          This foundation is set up to grow into a full product without feeling
-          heavy from day one.
+          The project workflow stays lightweight while still covering planning,
+          execution, quality, and reuse.
         </p>
       </div>
     </aside>

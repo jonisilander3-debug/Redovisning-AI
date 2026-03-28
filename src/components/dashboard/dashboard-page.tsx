@@ -8,30 +8,30 @@ import { StatusBadge } from "@/components/ui/status-badge";
 
 const kpis = [
   {
-    label: "Money available",
-    value: "$84,200",
-    change: "Up 8.4% from last month, with room for upcoming payroll and supplier costs.",
+    label: "Projects on track",
+    value: "14",
+    change: "Most active work is moving steadily through the current delivery window.",
     tone: "positive" as const,
-    badge: "Healthy",
+    badge: "On track",
   },
   {
-    label: "Expected incoming",
-    value: "$18,460",
-    change: "Three customer payments are expected this week and look on track.",
+    label: "Needs attention",
+    value: "4",
+    change: "A small number of projects show early drift, blockers, or delayed kickoff work.",
     tone: "neutral" as const,
-    badge: "Planned",
-  },
-  {
-    label: "Running costs",
-    value: "-$9,380",
-    change: "Software and contractor spend are slightly above your usual pace.",
-    tone: "negative" as const,
     badge: "Watch",
   },
   {
+    label: "Active blockers",
+    value: "7",
+    change: "Most blockers already have follow-up owners and next actions in place.",
+    tone: "negative" as const,
+    badge: "Managed",
+  },
+  {
     label: "Active work",
-    value: "12",
-    change: "A balanced pipeline across design, delivery, and follow-up work.",
+    value: "26",
+    change: "Tasks are spread across current delivery, kickoff follow-through, and quality work.",
     tone: "neutral" as const,
     badge: "Steady",
   },
@@ -49,14 +49,14 @@ const trendBars = [
 
 const activity = [
   {
-    title: "A customer payment landed",
-    meta: "Luma Studio paid their latest project milestone.",
+    title: "Kickoff was completed on a new project",
+    meta: "The team, first tasks, and launch notes are now visible to everyone involved.",
     time: "30 min ago",
     tone: "success" as const,
   },
   {
-    title: "Two receipts are ready to review",
-    meta: "Travel and software purchases were added this morning.",
+    title: "A blocker follow-up was updated",
+    meta: "Ownership and next action are now clear for one delayed task.",
     time: "2 hours ago",
     tone: "accent" as const,
   },
@@ -70,36 +70,46 @@ const activity = [
 
 const attentionItems = [
   {
-    title: "Follow up on one late payment",
-    description: "Oak & Ember is now 6 days past the expected payment date.",
-    badge: "Needs follow-up",
+    title: "Check two delayed kickoff tasks",
+    description: "One newly started project is already showing drift in its first-step work.",
+    badge: "Needs attention",
     tone: "danger" as const,
   },
   {
-    title: "Review a larger software cost",
-    description: "One annual renewal came in higher than your regular monthly plan.",
+    title: "Review one repeated blocker pattern",
+    description: "A known issue came back on another task without a stronger preventive step.",
     badge: "Worth checking",
     tone: "accent" as const,
   },
   {
-    title: "Finish the week with clean records",
-    description: "A few receipts still need matching before everything feels tidy.",
+    title: "Finish one launch follow-through review",
+    description: "A recently started project needs a quick check to confirm the first week is still on track.",
     badge: "Almost done",
     tone: "primary" as const,
   },
 ];
 
-export function DashboardPage() {
+type DashboardPageProps = {
+  companyName: string;
+  userName: string;
+  roleLabel: string;
+};
+
+export function DashboardPage({
+  companyName,
+  userName,
+  roleLabel,
+}: DashboardPageProps) {
   return (
     <div className="space-y-6 lg:space-y-8">
       <PageHeader
         eyebrow="Dashboard"
-        title="A clear view of the business, without the noise"
-        description="Start from one calm overview. See the headline numbers, notice what is moving, and take care of the few things that deserve attention."
+        title="A clear view of project operations"
+        description={`${companyName} now has one connected workspace for planning, delivery, launch follow-through, and quality control. ${userName} is signed in as ${roleLabel.toLowerCase()}.`}
         actions={
           <>
-            <Button variant="secondary">Export snapshot</Button>
-            <Button>Create reminder</Button>
+            <Button variant="secondary">Review planning</Button>
+            <Button>Open launch health</Button>
           </>
         }
       />
@@ -118,7 +128,7 @@ export function DashboardPage() {
                 Weekly momentum
               </p>
               <h2 className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-foreground)]">
-                Stronger customer activity through the week
+                Work is moving steadily through the week
               </h2>
             </div>
             <StatusBadge label="Upward trend" tone="success" />
@@ -156,9 +166,9 @@ export function DashboardPage() {
                   What this means
                 </p>
                 <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
-                  Demand is steady and customer movement is healthy. This is a
-                  good moment to stay focused on follow-up rather than adding
-                  complexity.
+                  Delivery is steady, and most work is progressing without major
+                  friction. This is a good moment to keep first-phase work and
+                  blocker follow-through tight.
                 </p>
               </div>
             </div>
@@ -193,7 +203,7 @@ export function DashboardPage() {
             </div>
             <div className="rounded-[22px] bg-white p-4">
               <p className="text-sm text-[var(--color-muted-foreground)]">
-                Ready to close
+                Ready to finish
               </p>
               <NumberDisplay value="05" tone="positive" size="md" />
             </div>
@@ -209,7 +219,7 @@ export function DashboardPage() {
                 Recent activity
               </p>
               <h2 className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-foreground)]">
-                The latest business movement
+                The latest project movement
               </h2>
             </div>
             <Button variant="ghost">See all</Button>
@@ -271,9 +281,9 @@ export function DashboardPage() {
           </Card>
 
           <EmptyState
-            title="More modules can grow here later"
-            description="Customers, projects, time, receipts, invoice drafts, accounting, payroll, and backoffice are already placed in navigation so the product can expand with a steady structure."
-            action={<Button variant="secondary">Review roadmap</Button>}
+            title="The operating system is connected"
+            description="Projects now move from preset and template setup into kickoff, execution, risk handling, recovery, prevention, and reuse without leaving this module."
+            action={<Button variant="secondary">Review project flow</Button>}
           />
         </div>
       </section>
